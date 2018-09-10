@@ -47,6 +47,11 @@ class ViewController: UIViewController {
         }
     }
     
+    @IBAction private func newGame(_ sender: UIButton) {
+        print("New Game")
+        game = Concentration(numberOfPairsOfCards: numberOfPairsOfCards)
+        updateViewFromModel()
+    }
     private func updateViewFromModel(){
         for index in cardButtons.indices{
             let button = cardButtons[index]
