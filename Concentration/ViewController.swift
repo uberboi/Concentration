@@ -10,14 +10,21 @@ import UIKit
 
 class ViewController: UIViewController {
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
-    }
-
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
+    }
+    
+    //Identifiers don't reset
+    //Run out of emojis in dictionary
+    @IBAction private func newGame(_ sender: UIButton) {
+        print("New Game")
+        print(emoji)
+        //Game is set to newly intialized Concentration() and view is updated
+        game = Concentration(numberOfPairsOfCards: numberOfPairsOfCards)
+        emojiChoices = getEmojiChoices()
+        emoji.removeAll()
+        updateViewFromModel()
     }
     
     private lazy var game = Concentration(numberOfPairsOfCards: numberOfPairsOfCards)
@@ -26,7 +33,12 @@ class ViewController: UIViewController {
         return (cardButtons.count+1) / 2
     }
     
-    private var emojiChoices = ["🦇", "😱", "🙀", "😈", "🎃", "👻", "🍭", "🍬", "🍎"]
+    private var emojiChoices = [String]()
+    
+    private func getEmojiChoices() -> [String]{
+        let halloween = ["🦇", "😱", "🙀", "😈", "🎃", "👻", "🍭", "🍬", "🍎"]
+        return halloween
+    }
     
     @IBOutlet private var cardButtons: [UIButton]!
     @IBOutlet private weak var flipCountLabel: UILabel!
@@ -47,20 +59,17 @@ class ViewController: UIViewController {
         }
     }
     
-    @IBAction private func newGame(_ sender: UIButton) {
-        print("New Game")
-        game = Concentration(numberOfPairsOfCards: numberOfPairsOfCards)
-        updateViewFromModel()
-    }
     private func updateViewFromModel(){
         for index in cardButtons.indices{
             let button = cardButtons[index]
             let card = game.cards[index]
             if card.isFaceUp{
                 button.backgroundColor = UIColor.white
+                //Button title is looked up in dictionary from card identifier
                 button.setTitle(emoji(for: card), for: UIControlState.normal)
             }else{
                 button.setTitle("", for: UIControlState.normal)
+                //button.setTitle(emoji(for: card), for: UIControlState.normal)
                 button.backgroundColor = card.isMatched ? UIColor.white.withAlphaComponent(0) : UIColor.orange
             }
         }
@@ -69,10 +78,20 @@ class ViewController: UIViewController {
     
     private var emoji = [Int : String]()
     private func emoji(for card: Card) -> String {
+        //if card.identifier is not in dictionary and there are still emojis to choose from
+        //identifier is inserted into dictionary with random emoji
         if emoji[card.identifier] == nil, emojiChoices.count > 0 {
             emoji[card.identifier] = emojiChoices.remove(at: (emojiChoices.count-1).arc4Random)
         }
         return emoji[card.identifier] ?? "?"
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        // Do any additional setup after loading the view, typically from a nib.
+        //updateViewFromModel()
+        emojiChoices = getEmojiChoices()
+        updateViewFromModel()
     }
 }
 

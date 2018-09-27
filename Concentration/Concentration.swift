@@ -45,6 +45,14 @@ class Concentration{
         }
     }
     
+    func shuffle(cards: [Card]){
+        var cardss = cards
+        for i in cardss.indices {
+            let j = arc4random_uniform( numericCast(i+1) )
+            cardss.swapAt(i, numericCast(j))
+        }
+    }
+    
     init(numberOfPairsOfCards: Int){
         assert(numberOfPairsOfCards > 0, "Concentration.init(\(numberOfPairsOfCards)) : You must atleast have one pair of cards")
         for _ in 1...numberOfPairsOfCards{
@@ -52,5 +60,9 @@ class Concentration{
             cards += [card, card]
         }
         // TODO: Shuffle the cards
+        for i in cards.indices {
+            let j = arc4random_uniform( numericCast(i+1) )
+            cards.swapAt(i, numericCast(j))
+        }
     }
 }
